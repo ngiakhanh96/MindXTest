@@ -1,0 +1,63 @@
+<div>World Population</div>
+<div>{{ worldPopulation }}</div>
+<hr />
+
+<div>Top 20 largest countries</div>
+<div *ngFor="let name of largestCountryNames">
+  {{ name }}
+</div>
+<hr />
+
+<mat-form-field appearance="fill">
+  <mat-label>Country Name</mat-label>
+  <input
+    type="text"
+    matInput
+    placeholder="Search country"
+    [formControl]="myControl"
+    [matAutocomplete]="auto"
+    #input
+  />
+  <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+    <mat-option *ngFor="let option of suggestedCountryNames" [value]="option">
+      {{ option }}
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>
+
+<div class="spinner-container" *ngIf="dataSource.loading$ | async">
+  <mat-spinner></mat-spinner>
+</div>
+
+<mat-table [dataSource]="dataSource">
+  <ng-container matColumnDef="ranking">
+    <mat-header-cell *matHeaderCellDef> Ranking </mat-header-cell>
+    <mat-cell *matCellDef="let country">{{ country.ranking }}</mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="countryName">
+    <mat-header-cell *matHeaderCellDef>Country Name</mat-header-cell>
+    <mat-cell *matCellDef="let country">
+      {{ country.countryName }}
+    </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="population">
+    <mat-header-cell *matHeaderCellDef>Population</mat-header-cell>
+    <mat-cell *matCellDef="let country">
+      {{ country.population }}
+    </mat-cell>
+  </ng-container>
+
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+
+  <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+</mat-table>
+
+<mat-paginator
+  [length]="totalCountriesCount"
+  [pageSize]="pageSize"
+  [pageSizeOptions]="[pageSize]"
+  [pageIndex]="currentPage"
+  (page)="onPageChanged($event)"
+></mat-paginator>
